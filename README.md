@@ -33,10 +33,16 @@ pip install erajp
  - %o : alpabet era
  - %O : Chinese charactor era
  - %E : era year
-
+ - %e : era year(Number of digit=2)
+ 
 ## Main Project Website.
 
  [https://github.com/recruit-mtl/erajp](https://github.com/recruit-mtl/erajp)
 
 ## License
 MIT License
+
+## Changes
+### 190517
+- 新元号（令和）を追加
+- Data formatに`%e`（和暦2桁表示）を追加

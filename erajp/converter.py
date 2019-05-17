@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import datetime
+import locale
 
 from six import PY2, text_type
 
@@ -10,8 +11,10 @@ ERA_JP = (
     ("T", "大正"),
     ("S", "昭和"),
     ("H", "平成"),
+    ("R", "令和"),
 )
 
+locale.setlocale(locale.LC_ALL, '')
 
 class NotExceptedTimeException(Exception):
     pass
@@ -26,6 +29,7 @@ def strjpftime(time=datetime.datetime.today(), format="%o%E.%m.%d"):
             - %o : alphabet era
             - %O : Chinese character era
             - %E : era year
+            - %e : era year(zfill(2))
     :return:
     """
     era_year, era, era_ch = None, None, None
@@ -40,15 +44,20 @@ def strjpftime(time=datetime.datetime.today(), format="%o%E.%m.%d"):
     elif time < datetime.datetime(1989, 1, 8):
         era_year = time.year - 1925
         era, era_ch = ERA_JP[2]
-    else:
+    elif time < datetime.datetime(2019, 5, 1):
         era_year = time.year - 1988
         era, era_ch = ERA_JP[3]
+    else:
+        era_year = time.year - 2018
+        era, era_ch = ERA_JP[4]
     if era_year == 1 and format.find("%O") > -1:
         era_year = "元"
+    elif format.find("%e") > -1:
+        era_year = text_type(era_year).zfill(2)
     else:
         era_year = text_type(era_year)
 
-    format = format.replace("%o", era).replace("%O", era_ch).replace("%E", era_year)
+    format = format.replace("%o", era).replace("%O", era_ch).replace("%E", era_year).replace("%e", era_year)
     if PY2:
         strttime = time.strftime(format.encode("utf-8")).decode("utf-8")
     else:
